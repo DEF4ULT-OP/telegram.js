@@ -12,7 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "telegram.js": "*"
+    "telegram.js": "workspace:*"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
