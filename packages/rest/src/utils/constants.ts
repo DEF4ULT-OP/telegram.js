@@ -1,5 +1,7 @@
-import { makeRequest } from '../strategies /axios';
-import { RESTOptions, ResponseLike } from './types';
+import { makeRequest } from '../strategies/axios.js';
+import { RESTOptions, ResponseLike } from './types.js';
+
+export const DefaultUserAgent = `TelegramBot (https://telegram.js.org)`;
 
 export enum RESTEvents {
   Debug = 'restDebug',

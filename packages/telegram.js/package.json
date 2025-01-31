@@ -16,5 +16,10 @@
   "devDependencies": {
     "@types/node": "^22.12.0",
     "typescript": "latest"
+  },
+  "dependencies": {
+    "@vladfrangu/async_event_emitter": "^2.4.6",
+    "@telegramjs/rest": "workspace:*",
+    "@telegramjs/collection": "workspace:*"
   }
 }

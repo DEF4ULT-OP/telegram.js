@@ -20,6 +20,12 @@ importers:
 
   apps/test:
     dependencies:
+      '@telegramjs/rest':
+        specifier: workspace:*
+        version: link:../../packages/rest
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.4.7
       telegram.js:
         specifier: workspace:*
         version: link:../../packages/telegram.js
@@ -48,6 +54,9 @@ importers:
       axios:
         specifier: ^1.7.9
         version: 1.7.9
+      magic-bytes.js:
+        specifier: ^1.10.0
+        version: 1.10.0
     devDependencies:
       '@types/node':
         specifier: ^22.12.0
@@ -57,6 +66,16 @@ importers:
         version: 5.7.3
 
   packages/telegram.js:
+    dependencies:
+      '@telegramjs/collection':
+        specifier: workspace:*
+        version: link:../collection
+      '@telegramjs/rest':
+        specifier: workspace:*
+        version: link:../rest
+      '@vladfrangu/async_event_emitter':
+        specifier: ^2.4.6
+        version: 2.4.6
     devDependencies:
       '@types/node':
         specifier: ^22.12.0
@@ -122,6 +141,10 @@ packages:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
 
+  dotenv@16.4.7:
+    resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
+    engines: {node: '>=12'}
+
   fill-range@7.1.1:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
     engines: {node: '>=8'}
@@ -170,6 +193,9 @@ packages:
   is-number@7.0.0:
     resolution: {integrity: sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==}
     engines: {node: '>=0.12.0'}
+
+  magic-bytes.js@1.10.0:
+    resolution: {integrity: sha512-/k20Lg2q8LE5xiaaSkMXk4sfvI+9EGEykFS4b0CHHGWqDYU0bGUFSwchNOMA56D7TCs9GwVTkqe9als1/ns8UQ==}
 
   mime-db@1.52.0:
     resolution: {integrity: sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==}
@@ -341,6 +367,8 @@ snapshots:
 
   delayed-stream@1.0.0: {}
 
+  dotenv@16.4.7: {}
+
   fill-range@7.1.1:
     dependencies:
       to-regex-range: 5.0.1
@@ -375,6 +403,8 @@ snapshots:
       is-extglob: 2.1.1
 
   is-number@7.0.0: {}
+
+  magic-bytes.js@1.10.0: {}
 
   mime-db@1.52.0: {}
 

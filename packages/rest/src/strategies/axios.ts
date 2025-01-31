@@ -1,5 +1,5 @@
 import { types } from 'node:util';
-import { ResponseLike } from '../utils/types';
+import { ResponseLike } from '../utils/types.js';
 import axios, { AxiosRequestConfig } from 'axios';
 
 export async function makeRequest(

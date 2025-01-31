@@ -1,5 +1,5 @@
 {
-  "name": "telegram.js",
+  "name": "@telegramjs/telegram.js",
   "private": true,
   "scripts": {
     "build": "turbo build",

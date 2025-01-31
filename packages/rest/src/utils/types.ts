@@ -93,30 +93,17 @@ export interface RawFile {
   name: string;
 }
 
-export interface AuthData {
-  /**
-   * The authorization prefix to use for this request, useful if you use this with bearer tokens
-   *
-   * @defaultValue `REST.options.authPrefix`
-   */
-  prefix?: 'Bearer' | 'Bot';
-  /**
-   * The authorization token to use for this request
-   */
-  token: string;
-}
-
 export interface RequestData {
   /**
    * Whether to append JSON data to form data instead of `payload_json` when sending files
    */
   appendToFormData?: boolean;
   /**
-   * Alternate authorization data to use for this request only, or `false` to disable the Authorization header
+   * Alternate bot token to use for this request only, or `false` to disable the Authorization header
    *
    * @defaultValue `true`
    */
-  auth?: AuthData | boolean | undefined;
+  token?: string | boolean | undefined;
   /**
    * The body to send to this request.
    * If providing as BodyInit, set `passThroughBody: true`

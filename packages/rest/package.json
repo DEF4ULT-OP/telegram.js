@@ -18,8 +18,9 @@
     "typescript": "latest"
   },
   "dependencies": {
+    "@telegramjs/collection": "workspace:*",
     "@vladfrangu/async_event_emitter": "^2.4.6",
     "axios": "^1.7.9",
-    "@telegramjs/collection": "workspace:*"
+    "magic-bytes.js": "^1.10.0"
   }
 }

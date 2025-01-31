@@ -1,3 +1,10 @@
-import { sayHello } from 'telegram.js';
+import { Client } from 'telegram.js';
+import { config } from 'dotenv';
 
-sayHello(100);
+config();
+
+const client = new Client();
+
+client.login(process.env.TOKEN);
+
+client.rest.get('/getMe').then(console.log).catch(console.error);

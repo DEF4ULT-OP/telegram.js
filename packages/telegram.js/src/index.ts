@@ -1,3 +1,4 @@
-export const sayHello = (value: number) => {
-  console.log('Hello from telegram.js:', value);
-};
+import { BaseClient } from './client/BaseClient.js';
+import { Client } from './client/Client.js';
+
+export { BaseClient, Client };
