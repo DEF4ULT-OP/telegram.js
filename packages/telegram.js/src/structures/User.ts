@@ -25,6 +25,7 @@ export class User extends Base<APIUser> {
 
     this._patch(data);
   }
+
   override _patch(data: APIUser) {
     this.firstName = data.first_name;
 
@@ -65,3 +66,5 @@ export class User extends Base<APIUser> {
     }
   }
 }
+
+export type UserType = typeof User;

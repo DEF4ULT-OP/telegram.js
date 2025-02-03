@@ -1,17 +1,19 @@
+import { Collection } from '@telegramjs/collection';
 import { Client } from '../client/Client';
 import { ErrorCodes } from '../errors/errorCodes';
 import { TelegramjsError } from '../errors/TJSError';
+import { Constructable } from '../util/types';
 import { BaseManager } from './BaseManager';
 
-export class DataManager<T> extends BaseManager {
-  constructor(
+export class DataManager<Key, Holds, Resolvable> extends BaseManager {
+  protected constructor(
     client: Client,
-    public readonly holds: T
+    protected readonly holds: Constructable<Holds>
   ) {
     super(client);
   }
 
-  get cache(): Map<string, T> {
+  get cache(): Collection<Key, Holds> {
     throw new TelegramjsError(
       ErrorCodes.NotImplemented,
       'get cache',
@@ -19,13 +21,12 @@ export class DataManager<T> extends BaseManager {
     );
   }
 
-  resolve(idOrInstance: string | T) {
-    if (typeof idOrInstance === 'string') {
-      return this.cache.get(idOrInstance) ?? null;
-    }
-
-    // @ts-ignore
+  resolve(idOrInstance: Resolvable | Holds) {
     if (idOrInstance instanceof this.holds) return idOrInstance;
+
+    if (typeof idOrInstance === 'string' || typeof idOrInstance === 'number') {
+      return this.cache.get(idOrInstance as unknown as Key) ?? null;
+    }
 
     return null;
   }
