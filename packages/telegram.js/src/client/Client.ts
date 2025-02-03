@@ -1,8 +1,10 @@
 import { ErrorCodes } from '../errors/errorCodes.js';
 import { TelegramjsError } from '../errors/TJSError.js';
-import { ClientEvents, ClientStatus } from '../util/constants.js';
+import { Events, ClientStatus } from '../util/constants.js';
 import { ClientOptions } from '../util/options.js';
 import { BaseClient } from './BaseClient.js';
+import { PollingClient } from './PollingClient.js';
+import { UpdaterClient } from './UpdateClient.js';
 
 /**
  * The main hub for interacting with the Telegram API, and the starting point for any bot.
@@ -11,6 +13,8 @@ import { BaseClient } from './BaseClient.js';
 export class Client extends BaseClient {
   public status: ClientStatus;
   public token: string | null | undefined = null;
+  public readonly polling: PollingClient;
+  public readonly updater: UpdaterClient;
 
   constructor(options: Partial<ClientOptions> = {}) {
     super(options);
@@ -21,6 +25,9 @@ export class Client extends BaseClient {
     if (!this.token && 'TELEGRAM_TOKEN' in process.env) {
       this.token = process.env.TELEGRAM_TOKEN;
     }
+
+    this.polling = new PollingClient(this);
+    this.updater = new UpdaterClient(this);
   }
 
   /**
@@ -37,8 +44,9 @@ export class Client extends BaseClient {
     this.token = token;
     this.rest.setToken(this.token);
 
-    this.emit(ClientEvents.Debug, `Provided token: ${this.token}`);
-    this.emit(ClientEvents.Debug, 'Preparing to connect to the gateway...');
+    this.emit(Events.Debug, `Provided token: ${this._censoredToken}`);
+
+    this.polling.start();
 
     return this.token;
   }

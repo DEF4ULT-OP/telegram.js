@@ -12,14 +12,20 @@ export async function makeRequest(
     body: await resolveBody(init.body),
   } as AxiosRequestConfig;
 
-  const res = await axios(options);
+  try {
+    const res = await axios(options);
 
-  return {
-    body: res.data,
-    headers: res.headers,
-    status: res.status,
-    statusText: res.statusText,
-  };
+    return {
+      body: res.data,
+      headers: res.headers,
+      status: res.status,
+      statusText: res.statusText,
+    };
+  } catch (err: any) {
+    console.log(err);
+    // console.error(err?.response?.data ?? err.message);
+    return Promise.reject(err?.response?.data ?? err.message);
+  }
 }
 
 export async function resolveBody(

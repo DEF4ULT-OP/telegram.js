@@ -20,6 +20,7 @@ import { AxiosRequestConfig } from 'axios';
 import { filetypeinfo } from 'magic-bytes.js';
 import { isBufferLike } from './utils/utils.js';
 import { makeRequest } from './strategies/axios.js';
+import qs from 'querystring';
 
 /**
  * Represents the class that manages handlers for endpoints
@@ -151,6 +152,9 @@ export class REST extends AsyncEventEmitter<RESTEvents> {
     return this.request({ ...options, fullRoute, method: RequestMethod.Patch });
   }
 
+  public parseResponse(body: any) {
+    return body.result;
+  }
   /**
    * Runs a request from the api
    *
@@ -158,7 +162,7 @@ export class REST extends AsyncEventEmitter<RESTEvents> {
    */
   public async request(options: InternalRequest) {
     const response = await this.queueRequest(options);
-    return response.body;
+    return this.parseResponse(response.body);
   }
   /**
    * Sets the default agent to use for requests performed by this manager
@@ -205,7 +209,7 @@ export class REST extends AsyncEventEmitter<RESTEvents> {
     let query = '';
 
     if (request.query) {
-      const resolvedQuery = request.query.toString();
+      const resolvedQuery = qs.stringify(request.query);
       if (resolvedQuery !== '') {
         query = `?${resolvedQuery}`;
       }

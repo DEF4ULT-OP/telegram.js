@@ -1,10 +1,16 @@
-import { Client } from 'telegram.js';
 import { config } from 'dotenv';
+import { Client, Events } from 'telegram.js';
 
 config();
 
 const client = new Client();
 
-client.login(process.env.TOKEN);
+client.on(Events.Update, (update) => {
+  console.dir(update.rawData, { depth: 10 });
+});
 
-client.rest.get('/getMe').then(console.log).catch(console.error);
+client.on(Events.Message, (message) => {
+  // console.log('message', message);
+});
+
+client.login(process.env.TOKEN);

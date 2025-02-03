@@ -4,17 +4,20 @@ import { ClientOptions, Options } from './../util/options.js';
 import { AsyncEventEmitter } from '@vladfrangu/async_event_emitter';
 import { TelegramjsTypeError } from '../errors/TJSError.js';
 import { ErrorCodes } from '../errors/errorCodes.js';
-import { REST } from '@telegramjs/rest';
+import { API, REST } from '@telegramjs/rest';
 import { flatten } from '../util/utils.js';
+import { EventHandlerMap } from '../util/types.js';
 
 /**
  * The base class for all clients.
  * @extends {AsyncEventEmitter}
  */
 export class BaseClient extends AsyncEventEmitter {
-  public rest: REST;
+  public readonly options: ClientOptions;
+  public readonly rest: REST;
+  public readonly api: API;
 
-  constructor(public options: Partial<ClientOptions>) {
+  constructor(options: Partial<ClientOptions>) {
     super();
 
     if (typeof options !== 'object' || options === null) {
@@ -30,6 +33,7 @@ export class BaseClient extends AsyncEventEmitter {
 
     this.options = {
       ...defaultOptions,
+      ...options,
     };
 
     /**
@@ -37,6 +41,8 @@ export class BaseClient extends AsyncEventEmitter {
      * @type {REST}
      */
     this.rest = new REST(this.options.rest);
+
+    this.api = new API(this.rest);
   }
 
   destroy() {}
@@ -61,6 +67,20 @@ export class BaseClient extends AsyncEventEmitter {
     if (maxListeners !== 0) {
       this.setMaxListeners(maxListeners - 1);
     }
+  }
+
+  override on<E extends keyof EventHandlerMap>(
+    event: E,
+    listener: EventHandlerMap[E]
+  ): this {
+    return super.on(event, listener as any);
+  }
+
+  override emit<E extends keyof EventHandlerMap>(
+    event: E,
+    ...args: Parameters<EventHandlerMap[E]>
+  ): boolean {
+    return super.emit(event, ...(args as any));
   }
 
   toJSON(...props: any[]) {

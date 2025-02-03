@@ -3,6 +3,8 @@ export enum ClientStatus {
   Ready = 'ready',
 }
 
-export enum ClientEvents {
+export enum Events {
   Debug = 'debug',
+  Update = 'update',
+  Message = 'message',
 }

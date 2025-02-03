@@ -127,7 +127,7 @@ export interface RequestData {
   /**
    * Query string parameters to append to the called endpoint
    */
-  query?: URLSearchParams;
+  query?: Record<string, any>;
   /**
    * Reason to show in the audit logs
    */
