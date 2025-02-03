@@ -2,6 +2,7 @@ import { Collection } from '@telegramjs/collection';
 import { Client } from '../client/Client';
 import { Constructable } from '../util/types';
 import { DataManager } from './DataManager';
+import { Base } from '../structures/Base';
 
 export class CachedManager<Key, Holds, Resolvable> extends DataManager<
   Key,
@@ -44,7 +45,10 @@ export class CachedManager<Key, Holds, Resolvable> extends DataManager<
     cache: boolean = true,
     { id, extras = [] }: { id?: Key; extras?: unknown[] } = {}
   ) {
-    const existing: any = this.cache.get(id ?? data.id);
+    type base = Base<any> | undefined;
+
+    const existing = this.cache.get(id ?? data.id) as unknown as base;
+
     if (existing) {
       if (cache) {
         existing._patch(data);
