@@ -1,5 +1,5 @@
 import { REST } from '../REST.js';
-import { APIUpdate, APIUpdateOptions } from './structures/update.js';
+import { APIUpdate, APIUpdateOptions } from './interfaces/update.js';
 import { UsersAPI } from './user.js';
 
 export class API {
@@ -9,23 +9,9 @@ export class API {
     this.users = new UsersAPI(this.rest);
   }
 
-  public async getUpdates({
-    offset,
-    limit,
-    timeout,
-    allowedUpdates,
-  }: APIUpdateOptions = {}): Promise<APIUpdate[]> {
-    const options = {
-      offset,
-      limit,
-      timeout,
-      allowed_updates: allowedUpdates,
-    };
-
-    return this.rest
-      .get('/getUpdates', {
-        query: options,
-      })
-      .then((updates) => updates.map((update: any) => new APIUpdate(update)));
+  public async getUpdates(options: APIUpdateOptions = {}) {
+    return this.rest.get('/getUpdates', {
+      query: options,
+    }) as Promise<APIUpdate[]>;
   }
 }

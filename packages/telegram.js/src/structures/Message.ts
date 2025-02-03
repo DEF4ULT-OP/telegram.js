@@ -1,22 +1,42 @@
 import { APIMessage } from '@telegramjs/rest';
 import { Base } from './Base.js';
 import { Client } from '../client/Client.js';
+import { Chat } from './Chat.js';
+import { User } from './User.js';
 
-class BaseMessage extends Base {}
+export class Message extends Base<APIMessage> {
+  public id!: number;
+  public text!: string | null;
+  public threadId?: number;
+  public from?: User;
+  public chat?: Chat;
+  public senderChat?: Chat;
+  public createdTimestamp: number;
 
-class MessageAPI extends BaseMessage {}
-type Constructor<T> = new (...args: any[]) => T;
-
-function mixin<T extends Constructor<{}>>(Base: T) {
-  return class extends Base {
-    methodA() {
-      console.log('Method A from Mixin A');
-    }
-  };
-}
-
-export class Message extends mixin() {
   constructor(client: Client, data: APIMessage) {
     super(client);
+
+    this.createdTimestamp = data.date;
+
+    this._patch(data);
+  }
+
+  override _patch(data: APIMessage) {
+    this.id = data.message_id;
+    this.text = data.text ?? null;
+
+    if ('message_thread_id' in data) {
+      this.threadId = data.message_thread_id;
+    }
+    if ('from' in data) {
+      // this.from = this.client.users.
+    }
+
+    if ('chat' in data) {
+      this.chat;
+    }
+    if ('sender_chat' in data) {
+      this.senderChat;
+    }
   }
 }

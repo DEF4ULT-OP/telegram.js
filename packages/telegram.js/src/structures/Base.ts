@@ -8,15 +8,13 @@ import { flatten } from '../util/utils';
  * @abstract
  */
 export class Base<T> {
-  private readonly id: any;
-  // @ts-ignore
   constructor(public readonly client: Client) {}
 
   _clone() {
     return Object.assign(Object.create(this), this);
   }
 
-  _patch(data: T) {
+  _patch(data: T): any {
     return data;
   }
 
@@ -31,6 +29,7 @@ export class Base<T> {
   }
 
   valueOf() {
+    // @ts-ignore
     return this.id;
   }
 }

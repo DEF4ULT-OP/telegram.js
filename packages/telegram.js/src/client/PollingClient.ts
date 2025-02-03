@@ -41,7 +41,7 @@ export class PollingClient {
       const updates = await this.client.api.getUpdates(options);
 
       if (updates.length) {
-        this.offset = updates[updates.length - 1]!.id + 1;
+        this.offset = updates[updates.length - 1]!.update_id + 1;
       }
 
       for (const update of updates) {
