@@ -43,7 +43,7 @@ export class CachedManager<
 
   _add(
     data: HoldType,
-    cache: boolean = true,
+    cache = true,
     { id, extras = [] }: { id?: Key; extras?: unknown[] } = {}
   ): Holds {
     const entry = new (this.holds as { new (...args: any[]): Holds })(
