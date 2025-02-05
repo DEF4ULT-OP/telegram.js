@@ -1,6 +1,8 @@
-import { APIChat, APIChatType } from '@telegramjs/rest';
-import { Client } from '../client/Client';
-import { Base } from './Base';
+import { APIChat } from '@telegramjs/rest';
+import { Client } from '../client/Client.js';
+import { Base } from './Base.js';
+import { TelegramId } from '../util/types.js';
+import { MessageManager } from '../managers/MessageManager.js';
 
 export enum ChatType {
   Private = 'private',
@@ -9,19 +11,27 @@ export enum ChatType {
   Channel = 'channel',
 }
 
-export class Chat extends Base<APIChatType> {
-  id: number;
-  type: ChatType;
-  title?: string;
-  username?: string;
-  firstName?: string;
-  lastName?: string;
+export class Chat extends Base<TelegramId, APIChat> {
+  override id: number;
+  public type: ChatType;
+  public title?: string;
+  public username?: string;
+  public firstName?: string;
+  public lastName?: string;
+
+  public readonly messages: MessageManager;
 
   constructor(client: Client, data: APIChat) {
     super(client);
     this.id = data.id;
     this.type = data.type as unknown as ChatType;
 
+    this.messages = new MessageManager(this);
+
+    this._patch(data);
+  }
+
+  override _patch(data: APIChat) {
     if ('title' in data) {
       this.title = data.title;
     }
@@ -37,5 +47,17 @@ export class Chat extends Base<APIChatType> {
     if ('last_name' in data) {
       this.lastName = data.last_name;
     }
+  }
+
+  async send(text: string, options: any) {
+    const data = await this.client.api.chats.sendMessage(
+      this.id,
+      text,
+      options
+    );
+
+    const message = this.messages._add(data, false);
+
+    return message;
   }
 }

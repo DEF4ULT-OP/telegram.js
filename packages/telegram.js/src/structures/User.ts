@@ -1,9 +1,10 @@
 import { APIUser } from '@telegramjs/rest';
 import { Base } from './Base.js';
 import { Client } from '../client/Client.js';
+import { TelegramId } from '../util/types.js';
 
-export class User extends Base<APIUser> {
-  public id: number;
+export class User extends Base<TelegramId, APIUser> {
+  public override id: number;
   public firstName!: string;
   public lastName?: string;
   public username?: string;

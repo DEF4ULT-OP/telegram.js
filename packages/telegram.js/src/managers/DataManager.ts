@@ -1,9 +1,9 @@
 import { Collection } from '@telegramjs/collection';
-import { Client } from '../client/Client';
-import { ErrorCodes } from '../errors/errorCodes';
-import { TelegramjsError } from '../errors/TJSError';
-import { Constructable } from '../util/types';
-import { BaseManager } from './BaseManager';
+import { Client } from '../client/Client.js';
+import { ErrorCodes } from '../errors/errorCodes.js';
+import { TelegramjsError } from '../errors/TJSError.js';
+import { Constructable } from '../util/types.js';
+import { BaseManager } from './BaseManager.js';
 
 export class DataManager<Key, Holds, Resolvable> extends BaseManager {
   protected constructor(

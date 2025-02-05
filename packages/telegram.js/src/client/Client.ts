@@ -1,5 +1,6 @@
 import { ErrorCodes } from '../errors/errorCodes.js';
 import { TelegramjsError } from '../errors/TJSError.js';
+import { ChatManager } from '../managers/ChatManager.js';
 import { UserManager } from '../managers/UserManager.js';
 import { Events, ClientStatus } from '../util/constants.js';
 import { ClientOptions } from '../util/options.js';
@@ -16,7 +17,9 @@ export class Client extends BaseClient {
   public token: string | null | undefined = null;
   public readonly polling: PollingClient;
   public readonly updater: UpdaterClient;
+
   public readonly users: UserManager;
+  public readonly chats: ChatManager;
 
   constructor(options: Partial<ClientOptions> = {}) {
     super(options);
@@ -32,6 +35,8 @@ export class Client extends BaseClient {
     this.updater = new UpdaterClient(this);
 
     this.users = new UserManager(this);
+
+    this.chats = new ChatManager(this);
   }
 
   /**

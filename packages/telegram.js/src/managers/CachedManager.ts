@@ -1,19 +1,20 @@
 import { Collection } from '@telegramjs/collection';
-import { Client } from '../client/Client';
-import { Constructable } from '../util/types';
-import { DataManager } from './DataManager';
-import { Base } from '../structures/Base';
+import { Client } from '../client/Client.js';
+import { Constructable } from '../util/types.js';
+import { DataManager } from './DataManager.js';
+import { Base } from '../structures/Base.js';
 
-export class CachedManager<Key, Holds, Resolvable> extends DataManager<
+export class CachedManager<
   Key,
-  Holds,
-  Resolvable
-> {
+  Holds extends Base<Key, any>,
+  HoldType,
+  Resolvable,
+> extends DataManager<Key, Holds, Resolvable> {
   private readonly _cache: Collection<Key, Holds>;
-  constructor(
+  protected constructor(
     client: Client,
     holds: Constructable<Holds>,
-    iterable?: Iterable<Holds>
+    iterable?: Iterable<HoldType>
   ) {
     super(client, holds);
 
@@ -41,13 +42,17 @@ export class CachedManager<Key, Holds, Resolvable> extends DataManager<
   }
 
   _add(
-    data: any,
+    data: HoldType,
     cache: boolean = true,
     { id, extras = [] }: { id?: Key; extras?: unknown[] } = {}
-  ) {
-    type base = Base<any> | undefined;
+  ): Holds {
+    const entry = new (this.holds as { new (...args: any[]): Holds })(
+      this.client,
+      data,
+      ...extras
+    );
 
-    const existing = this.cache.get(id ?? data.id) as unknown as base;
+    const existing = this.cache.get(id ?? entry.id);
 
     if (existing) {
       if (cache) {
@@ -59,11 +64,8 @@ export class CachedManager<Key, Holds, Resolvable> extends DataManager<
       return clone;
     }
 
-    const entry = this.holds
-      ? // @ts-ignore
-        new this.holds(this.client, data, ...extras)
-      : data;
     if (cache) this.cache.set(id ?? entry.id, entry);
+
     return entry;
   }
 }

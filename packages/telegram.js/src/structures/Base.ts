@@ -1,13 +1,14 @@
 'use strict';
 
-import { Client } from '../client/Client';
-import { flatten } from '../util/utils';
+import { Client } from '../client/Client.js';
+import { flatten } from '../util/utils.js';
 
 /**
  * Represents a data model .
  * @abstract
  */
-export class Base<T> {
+export abstract class Base<I, T> {
+  public id!: I;
   constructor(public readonly client: Client) {}
 
   _clone() {
@@ -28,10 +29,7 @@ export class Base<T> {
     return flatten(this, ...props);
   }
 
-  valueOf() {
-    // @ts-ignore
+  valueOf(): I {
     return this.id;
   }
 }
-
-exports.Base = Base;

@@ -5,8 +5,8 @@ import {
   CacheWithLimitsOptions,
   ManagerType,
   Manager,
-} from './types';
-import { LimitedCollection } from './LimitedCollection';
+} from './types.js';
+import { LimitedCollection } from './limitedCollection.js';
 
 export interface PollingOptions {
   enabled: boolean;

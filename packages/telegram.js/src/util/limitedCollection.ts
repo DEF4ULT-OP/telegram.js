@@ -1,8 +1,8 @@
 'use strict';
 
 import { Collection } from '@telegramjs/collection';
-import { TelegramjsError } from '../errors/TJSError';
-import { ErrorCodes } from '../errors/errorCodes';
+import { TelegramjsError } from '../errors/TJSError.js';
+import { ErrorCodes } from '../errors/errorCodes.js';
 
 export interface LimitedCollectionOptions<Key, Value> {
   maxSize?: number;
