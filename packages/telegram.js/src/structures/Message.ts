@@ -3,9 +3,8 @@ import { Base } from './Base.js';
 import { Client } from '../client/Client.js';
 import { Chat } from './Chat.js';
 import { User } from './User.js';
-import { TelegramId } from '../util/types.js';
 
-export class Message extends Base<TelegramId, APIMessage> {
+export class Message extends Base<APIMessage> {
   public override id: number;
   public text!: string | null;
   public threadId?: number;

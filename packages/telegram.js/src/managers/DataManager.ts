@@ -24,10 +24,8 @@ export class DataManager<Key, Holds, Resolvable> extends BaseManager {
   resolve(idOrInstance: Resolvable | Holds) {
     if (idOrInstance instanceof this.holds) return idOrInstance;
 
-    if (typeof idOrInstance === 'string' || typeof idOrInstance === 'number') {
-      return this.cache.get(idOrInstance as Key) ?? null;
-    }
-
-    return null;
+    return typeof idOrInstance === 'string' || typeof idOrInstance === 'number'
+      ? (this.cache.get(idOrInstance as Key) ?? null)
+      : null;
   }
 }

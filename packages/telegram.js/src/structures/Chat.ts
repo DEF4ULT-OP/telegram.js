@@ -1,7 +1,6 @@
 import { APIChat } from '@telegramjs/rest';
 import { Client } from '../client/Client.js';
 import { Base } from './Base.js';
-import { TelegramId } from '../util/types.js';
 import { MessageManager } from '../managers/MessageManager.js';
 
 export enum ChatType {
@@ -11,7 +10,7 @@ export enum ChatType {
   Channel = 'channel',
 }
 
-export class Chat extends Base<TelegramId, APIChat> {
+export class Chat extends Base<APIChat> {
   override id: number;
   public type: ChatType;
   public title?: string;

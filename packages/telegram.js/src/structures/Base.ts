@@ -1,14 +1,23 @@
 'use strict';
 
 import { Client } from '../client/Client.js';
+import { TelegramId } from '../util/types.js';
 import { flatten } from '../util/utils.js';
+
+export type BaseAPIType<T extends Base<any, any>> =
+  T extends Base<infer APIType, any> ? APIType : never;
+
+export type BaseConstructor<T extends Base<any, any>> = new (
+  client: Client,
+  data: BaseAPIType<T>
+) => T;
 
 /**
  * Represents a data model .
  * @abstract
  */
-export abstract class Base<I, T> {
-  public id!: I;
+export abstract class Base<T, Key = TelegramId> {
+  public id!: Key;
   constructor(public readonly client: Client) {}
 
   _clone() {
@@ -29,7 +38,7 @@ export abstract class Base<I, T> {
     return flatten(this, ...props);
   }
 
-  valueOf(): I {
+  valueOf(): Key {
     return this.id;
   }
 }
