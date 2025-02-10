@@ -22,7 +22,7 @@ export async function makeRequest(
       statusText: res.statusText,
     };
   } catch (err: any) {
-    console.log(err);
+    console.log(err?.errors || err);
     // console.error(err?.response?.data ?? err.message);
     return Promise.reject(err?.response?.data ?? err.message);
   }
