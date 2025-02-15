@@ -2,6 +2,7 @@ import { ErrorCodes } from '../errors/errorCodes.js';
 import { TelegramjsError } from '../errors/TJSError.js';
 import { ChatManager } from '../managers/ChatManager.js';
 import { UserManager } from '../managers/UserManager.js';
+import { User } from '../structures/User.js';
 import { Events, ClientStatus } from '../util/constants.js';
 import { ClientOptions } from '../util/options.js';
 import { BaseClient } from './BaseClient.js';
@@ -15,6 +16,7 @@ import { UpdaterClient } from './UpdateClient.js';
 export class Client extends BaseClient {
   public status: ClientStatus;
   public token: string | null | undefined = null;
+  public user: User | null;
   public readonly polling: PollingClient;
   public readonly updater: UpdaterClient;
 
@@ -25,6 +27,7 @@ export class Client extends BaseClient {
     super(options);
 
     this.token = null;
+    this.user = null;
     this.status = ClientStatus.Idle;
 
     if (!this.token && 'TELEGRAM_TOKEN' in process.env) {
@@ -55,11 +58,21 @@ export class Client extends BaseClient {
 
     this.emit(Events.Debug, `Provided token: ${this._censoredToken}`);
 
+    await this.loadClientUser();
+
     this.polling.start();
+    this.emit(Events.Ready);
 
     return this.token;
   }
 
+  async loadClientUser() {
+    const data = await this.api.users.getCurrent();
+
+    const clientUser = this.users._add(data, false);
+
+    this.user = clientUser;
+  }
   /**
    * Returns whether the client has logged in, indicative of being able to access
    * @returns {boolean}

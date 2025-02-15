@@ -1,4 +1,4 @@
-import { BufferResolvable, resolveFile } from '@telegramjs/util';
+import { BufferResolvable, resolveImage } from '@telegramjs/util';
 import { REST } from '../REST.js';
 import { APIChat } from './interfaces/chat.js';
 import { APIMessage } from './interfaces/message.js';
@@ -57,7 +57,7 @@ export class ChatsAPI {
   }
 
   async setPhoto(chatId: number, photo: BufferResolvable) {
-    const file = await resolveFile(photo);
+    const file = await resolveImage(photo);
 
     return this.rest.post('/setChatPhoto', {
       body: {
@@ -65,8 +65,9 @@ export class ChatsAPI {
       },
       files: [
         {
+          key: 'photo',
           name: 'photo',
-          ...file,
+          data: file,
         },
       ],
     }) as Promise<boolean>;

@@ -4,6 +4,7 @@ export enum ClientStatus {
 }
 
 export enum Events {
+  Ready = 'ready',
   Debug = 'debug',
   Update = 'update',
   Message = 'message',

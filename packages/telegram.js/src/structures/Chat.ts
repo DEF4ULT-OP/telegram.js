@@ -4,6 +4,7 @@ import { Base } from './Base.js';
 import { MessageManager } from '../managers/MessageManager.js';
 import { User } from './User.js';
 import { Message } from './Message.js';
+import { BufferResolvable } from '../../../util/dist/resolver.js';
 
 export enum ChatType {
   Private = 'private',
@@ -122,11 +123,19 @@ export class Chat extends Base<APIChat> {
   }
 
   async setDescription(description: string): Promise<boolean> {
-    const result = this.client.api.chats.setTitle(this.id, description);
+    const result = this.client.api.chats.setDescription(this.id, description);
 
     this.description = description;
 
     return result;
+  }
+
+  async setPhoto(photo: BufferResolvable): Promise<boolean> {
+    return this.client.api.chats.setPhoto(this.id, photo);
+  }
+
+  async deletePhoto(): Promise<boolean> {
+    return this.client.api.chats.deletePhoto(this.id);
   }
 
   async send(text: string, options: MessageOptions = {}): Promise<Message> {

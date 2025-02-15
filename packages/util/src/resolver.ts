@@ -20,7 +20,7 @@ export const streamToBuffer = async (
 export const resolveFile = async (
   resource: BufferResolvable | Stream
 ): Promise<{
-  data: Buffer | Uint8Array | boolean | number | string;
+  data: Buffer;
   contentType?: string;
 }> => {
   if (Buffer.isBuffer(resource)) return { data: resource };
@@ -52,14 +52,16 @@ export const resolveFile = async (
   );
 };
 
-export const resolveBase64 = (data: any) => {
+export const resolveBase64 = (data: Base64Resolvable): string => {
   if (Buffer.isBuffer(data))
     return `data:image/jpg;base64,${data.toString('base64')}`;
   return data;
 };
 
-export const resolveImage = async (image: BufferResolvable) => {
-  if (!image) return null;
+export const resolveImage = async (
+  image: BufferResolvable | Base64Resolvable
+) => {
+  if (!image) throw new Error('No image provided.');
   if (typeof image === 'string' && image.startsWith('data:')) {
     return image;
   }

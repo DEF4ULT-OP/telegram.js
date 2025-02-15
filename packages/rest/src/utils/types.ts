@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios';
+import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Agent } from 'node:https';
 import { Readable } from 'node:stream';
 
@@ -50,7 +50,7 @@ export interface RESTOptions {
    * The method called to perform the actual HTTP request given a url and web `fetch` options
    * For example, to use global fetch, simply provide `makeRequest: fetch`
    */
-  makeRequest(url: string, init: RequestInit): Promise<ResponseLike>;
+  makeRequest(url: string, init: AxiosRequestConfig): Promise<ResponseLike>;
 
   /**
    * The number of retries for errors with the 500 code, or errors
@@ -65,6 +65,13 @@ export interface RESTOptions {
    * @defaultValue `15_000`
    */
   timeout: number;
+
+  /**
+   * The extra offset to add to rate limits in milliseconds
+   *
+   * @defaultValue `50`
+   */
+  offset: number;
 }
 
 /**
@@ -95,15 +102,11 @@ export interface RawFile {
 
 export interface RequestData {
   /**
-   * Whether to append JSON data to form data instead of `payload_json` when sending files
-   */
-  appendToFormData?: boolean;
-  /**
-   * Alternate bot token to use for this request only, or `false` to disable the Authorization header
+   * Alternate bot token to use for this request only
    *
    * @defaultValue `true`
    */
-  token?: string | boolean | undefined;
+  token?: string | undefined;
   /**
    * The body to send to this request.
    * If providing as BodyInit, set `passThroughBody: true`
@@ -170,7 +173,7 @@ export interface InternalRequest extends RequestData {
 
 export interface HandlerRequestData
   extends Pick<InternalRequest, 'body' | 'files' | 'signal'> {
-  auth: boolean | string;
+  token: string | undefined;
 }
 
 export interface APIRequest {
@@ -185,7 +188,7 @@ export interface APIRequest {
   /**
    * Additional HTTP options for this request
    */
-  options: RequestInit;
+  options: AxiosRequestConfig;
   /**
    * The full path used to make the request
    */
@@ -223,7 +226,7 @@ export interface IHandler {
    */
   queueRequest(
     url: string,
-    options: RequestInit,
+    options: AxiosRequestConfig,
     requestData: HandlerRequestData
   ): Promise<ResponseLike>;
 }

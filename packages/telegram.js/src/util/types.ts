@@ -12,6 +12,7 @@ export type TelegramId = number;
 export type Constructable<Entity> = abstract new (...args: any[]) => Entity;
 
 export interface EventHandlerMap {
+  [Events.Ready]: () => void;
   [Events.Debug]: (data: string) => void;
   [Events.Update]: (update: APIUpdate) => void;
   [Events.Message]: (message: Message) => void;

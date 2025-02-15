@@ -10,6 +10,7 @@ export async function makeRequest(
     ...init,
     url,
     body: await resolveBody(init.body),
+    validateStatus: null,
   } as AxiosRequestConfig;
 
   try {
@@ -22,9 +23,7 @@ export async function makeRequest(
       statusText: res.statusText,
     };
   } catch (err: any) {
-    console.log(err?.errors || err);
-    // console.error(err?.response?.data ?? err.message);
-    return Promise.reject(err?.response?.data ?? err.message);
+    return Promise.reject(err);
   }
 }
 

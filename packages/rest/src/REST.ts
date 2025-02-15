@@ -19,8 +19,8 @@ import {
 import { AxiosRequestConfig } from 'axios';
 import { filetypeinfo } from 'magic-bytes.js';
 import { isBufferLike } from './utils/utils.js';
-import { makeRequest } from './strategies/axios.js';
 import qs from 'querystring';
+import { SequentialHandler } from './handlers/SequentialHandler.js';
 
 /**
  * Represents the class that manages handlers for endpoints
@@ -190,12 +190,28 @@ export class REST extends AsyncEventEmitter<RESTEvents> {
    * @returns The response from the api request
    */
   public async queueRequest(request: InternalRequest): Promise<ResponseLike> {
+    const hash = 'global';
+
+    const handler = this.handlers.get(hash) ?? this.createHandler(hash);
+
     const { url, fetchOptions } = await this.resolveRequest(request);
 
-    // todo: implement queuing
-    return makeRequest(url, fetchOptions);
+    return handler.queueRequest(url, fetchOptions, {
+      body: request.body,
+      files: request.files,
+      token: request.token,
+      signal: request.signal,
+    });
   }
 
+  private createHandler(hash: string) {
+    // Create the async request queue to handle requests
+    const queue = new SequentialHandler(this, hash);
+    // Save the queue based on its id
+    this.handlers.set(queue.id, queue);
+
+    return queue;
+  }
   /**
    * Formats the request data to a usable format for fetch
    *
@@ -266,14 +282,10 @@ export class REST extends AsyncEventEmitter<RESTEvents> {
       }
 
       if (request.body != null) {
-        if (request.appendToFormData) {
-          for (const [key, value] of Object.entries(
-            request.body as Record<string, unknown>
-          )) {
-            formData.append(key, value);
-          }
-        } else {
-          formData.append('payload_json', JSON.stringify(request.body));
+        for (const [key, value] of Object.entries(
+          request.body as Record<string, unknown>
+        )) {
+          formData.append(key, value);
         }
       }
 
