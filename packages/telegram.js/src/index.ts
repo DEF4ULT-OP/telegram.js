@@ -5,3 +5,4 @@ export { BaseClient, Client };
 
 export * from './util/constants.js';
 export * from './util/types.js';
+export * from './util/permissions.js';

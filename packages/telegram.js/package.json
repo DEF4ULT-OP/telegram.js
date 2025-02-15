@@ -20,6 +20,7 @@
   "dependencies": {
     "@vladfrangu/async_event_emitter": "^2.4.6",
     "@telegramjs/rest": "workspace:*",
-    "@telegramjs/collection": "workspace:*"
+    "@telegramjs/collection": "workspace:*",
+    "@telegramjs/util": "workspace:*"
   }
 }

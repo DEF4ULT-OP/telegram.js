@@ -2,6 +2,7 @@ import { Stream } from 'node:stream';
 import { Buffer } from 'buffer';
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import { isValidUrl } from './util.js';
 
 export type BufferResolvable = Buffer | string | AsyncIterable<Uint8Array>;
 
@@ -30,7 +31,7 @@ export const resolveFile = async (
   }
 
   if (typeof resource === 'string') {
-    if (/^https?:\/\//.test(resource)) {
+    if (isValidUrl(resource)) {
       const res = await fetch(resource);
 
       return {
@@ -67,5 +68,28 @@ export const resolveImage = async (
   }
 
   const file = await resolveFile(image);
-  return resolveBase64(file.data);
+  return file.data as any;
+  // return resolveBase64(file.data);
+};
+
+export const isFileId = (input: string) => {
+  const fileIdRegex = /^[A-Za-z0-9_-]{20,}$/;
+  if (fileIdRegex.test(input)) {
+    return true;
+  }
+
+  return false;
+};
+
+export const resolveFileIdOrFile = async (
+  resource: BufferResolvable | Stream
+) => {
+  if (
+    typeof resource === 'string' &&
+    (isFileId(resource) || isValidUrl(resource))
+  ) {
+    return resource;
+  }
+
+  return resolveFile(resource);
 };

@@ -111,7 +111,7 @@ export interface RequestData {
    * The body to send to this request.
    * If providing as BodyInit, set `passThroughBody: true`
    */
-  body?: unknown;
+  body?: Record<string, any> | undefined;
 
   agent?: Agent;
   /**

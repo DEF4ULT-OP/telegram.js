@@ -1,6 +1,32 @@
 import { APIChat } from './chat.js';
 import { APIUser } from './user.js';
 
+export interface APIMessageOptions {
+  business_connection_id?: string;
+  message_thread_id?: number;
+  parse_mode?: string;
+  entities?: [];
+  link_preview_options?: {
+    is_disabled?: boolean;
+    url?: string;
+    prefer_small_media?: boolean;
+    prefer_large_media?: boolean;
+    show_above_text?: boolean;
+  };
+  disable_notification?: boolean;
+  protect_content?: boolean;
+  allow_paid_broadcast?: boolean;
+  message_effect_id?: string;
+  reply_parameters?: any;
+  reply_markup?: any;
+}
+
+export interface APIMediaMessageOptions extends APIMessageOptions {
+  caption?: string;
+  caption_entities?: [];
+  show_caption_above_media?: boolean;
+  has_spoiler?: boolean;
+}
 export interface APIMessage {
   message_id: number;
   message_thread_id?: number;

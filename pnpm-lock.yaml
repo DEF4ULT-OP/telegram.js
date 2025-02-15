@@ -79,6 +79,9 @@ importers:
       '@telegramjs/rest':
         specifier: workspace:*
         version: link:../rest
+      '@telegramjs/util':
+        specifier: workspace:*
+        version: link:../util
       '@vladfrangu/async_event_emitter':
         specifier: ^2.4.6
         version: 2.4.6

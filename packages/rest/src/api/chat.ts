@@ -1,8 +1,16 @@
-import { BufferResolvable, resolveImage } from '@telegramjs/util';
+import {
+  BufferResolvable,
+  resolveFile,
+  resolveFileIdOrFile,
+} from '@telegramjs/util';
 import { REST } from '../REST.js';
-import { APIChat } from './interfaces/chat.js';
-import { APIMessage } from './interfaces/message.js';
-import { APIChatMember } from './interfaces/chatMember.js';
+import { APIChat, APIChatMember } from './interfaces/chat.js';
+import {
+  APIMediaMessageOptions,
+  APIMessage,
+  APIMessageOptions,
+} from './interfaces/message.js';
+import { RequestData } from '../utils/types.js';
 
 export class ChatsAPI {
   public constructor(private readonly rest: REST) {}
@@ -15,7 +23,7 @@ export class ChatsAPI {
 
   getMember(chatId: number, userId: number) {
     return this.rest.get('/getChatMember', {
-      body: {
+      query: {
         chat_id: chatId,
         user_id: userId,
       },
@@ -24,7 +32,7 @@ export class ChatsAPI {
 
   getMemberCount(chatId: number) {
     return this.rest.get('/getChatMemberCount', {
-      body: {
+      query: {
         chat_id: chatId,
       },
     }) as Promise<number>;
@@ -32,7 +40,7 @@ export class ChatsAPI {
 
   getAdmins(chatId: number) {
     return this.rest.get('/getChatAdministrators', {
-      body: {
+      query: {
         chat_id: chatId,
       },
     }) as Promise<APIChatMember[]>;
@@ -57,7 +65,7 @@ export class ChatsAPI {
   }
 
   async setPhoto(chatId: number, photo: BufferResolvable) {
-    const file = await resolveImage(photo);
+    const file = await resolveFile(photo);
 
     return this.rest.post('/setChatPhoto', {
       body: {
@@ -66,8 +74,8 @@ export class ChatsAPI {
       files: [
         {
           key: 'photo',
-          name: 'photo',
-          data: file,
+          name: 'photo.jpg',
+          ...file,
         },
       ],
     }) as Promise<boolean>;
@@ -81,7 +89,11 @@ export class ChatsAPI {
     }) as Promise<boolean>;
   }
 
-  sendMessage(chatId: number, text: string, options?: any) {
+  async sendMessage(
+    chatId: number,
+    text: string,
+    options: APIMessageOptions = {}
+  ) {
     return this.rest.post('/sendMessage', {
       body: {
         chat_id: chatId,
@@ -89,6 +101,36 @@ export class ChatsAPI {
         ...options,
       },
     }) as Promise<APIMessage>;
+  }
+
+  async sendPhoto(
+    chatId: number,
+    photo: BufferResolvable,
+    options: APIMediaMessageOptions = {}
+  ) {
+    const file = await resolveFileIdOrFile(photo);
+
+    const reqOptions: RequestData = {
+      body: {
+        chat_id: chatId,
+        caption: options.caption,
+        ...options,
+      },
+    };
+
+    if (typeof file === 'string') {
+      reqOptions.body!['photo'] = file;
+    } else {
+      reqOptions.files = [
+        {
+          key: 'photo',
+          name: 'photo.jpg',
+          ...file,
+        },
+      ];
+    }
+
+    return this.rest.post('/sendPhoto', reqOptions) as Promise<APIMessage>;
   }
 
   sendAction(

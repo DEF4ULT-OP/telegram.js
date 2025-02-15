@@ -4,7 +4,8 @@ import { Base } from './Base.js';
 import { MessageManager } from '../managers/MessageManager.js';
 import { User } from './User.js';
 import { Message } from './Message.js';
-import { BufferResolvable } from '../../../util/dist/resolver.js';
+import { ChatMember } from './ChatMember.js';
+import { Base64Resolvable, BufferResolvable } from '@telegramjs/util';
 
 export enum ChatType {
   Private = 'private',
@@ -75,7 +76,7 @@ export class Chat extends Base<APIChat> {
   override id: number;
   public type: ChatType;
   public title?: string;
-  description?: string;
+  public description?: string;
   public username?: string;
   public firstName?: string;
   public lastName?: string;
@@ -130,7 +131,7 @@ export class Chat extends Base<APIChat> {
     return result;
   }
 
-  async setPhoto(photo: BufferResolvable): Promise<boolean> {
+  async setPhoto(photo: BufferResolvable | Base64Resolvable): Promise<boolean> {
     return this.client.api.chats.setPhoto(this.id, photo);
   }
 
@@ -181,6 +182,21 @@ export class Chat extends Base<APIChat> {
     return message;
   }
 
+  async sendPhoto(
+    photo: BufferResolvable | Base64Resolvable,
+    options: MessageOptions = {}
+  ): Promise<Message> {
+    const data = await this.client.api.chats.sendPhoto(
+      this.id,
+      photo,
+      options as any
+    );
+
+    const message = this.messages._add(data, false);
+
+    return message;
+  }
+
   async sendAction(
     action: ChatAction,
     options: { threadId?: number; businessId?: number } = {}
@@ -194,5 +210,11 @@ export class Chat extends Base<APIChat> {
 
   async startTyping(options: { threadId?: number; businessId?: number } = {}) {
     return this.sendAction(ChatAction.Typing, options);
+  }
+
+  async getAdmins(): Promise<ChatMember[]> {
+    const data = await this.client.api.chats.getAdmins(this.id);
+
+    return data.map((member) => new ChatMember(this, member));
   }
 }
