@@ -1,3 +1,6 @@
+import { BufferResolvable, resolveFileIdOrFile } from '@telegramjs/util';
+import { RequestData } from './types.js';
+
 /**
  * Sleeps for a given amount of time.
  *
@@ -44,3 +47,49 @@ export function isBufferLike(
 export function normalizeRateLimitOffset(offset: number): number {
   return Math.max(0, offset);
 }
+
+export interface PrepareMediaRequestOptions {
+  body: Record<string, any>;
+  files: {
+    name: string;
+    field: string;
+    file?: BufferResolvable;
+    fileKey?: string;
+    download?: boolean;
+  }[];
+}
+
+export const prepareMediaRequest = async ({
+  body,
+  files,
+}: PrepareMediaRequestOptions): Promise<RequestData> => {
+  const options: RequestData = {
+    body,
+    files: [],
+  };
+
+  for (const file of files) {
+    const fileData = file.file || (body[file.field] as BufferResolvable);
+
+    if (fileData) {
+      const resolvedFile = await resolveFileIdOrFile(
+        fileData,
+        file.download ?? false
+      );
+
+      if (typeof resolvedFile === 'string') {
+        options.body![file.field as string] = resolvedFile;
+      } else {
+        options.files?.push({
+          name: file.name,
+          key: file.fileKey || file.field,
+          ...resolvedFile,
+        });
+
+        delete options.body![file.field as string];
+      }
+    }
+  }
+
+  return options;
+};

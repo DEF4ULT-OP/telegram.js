@@ -1,4 +1,4 @@
-import { APIChat } from '@telegramjs/rest';
+import { APIChat, APIDiceEmoji } from '@telegramjs/rest';
 import { Client } from '../client/Client.js';
 import { Base } from './Base.js';
 import { MessageManager } from '../managers/MessageManager.js';
@@ -183,12 +183,57 @@ export class Chat extends Base<APIChat> {
   }
 
   async sendPhoto(
-    photo: BufferResolvable | Base64Resolvable,
+    photo: BufferResolvable,
     options: MessageOptions = {}
   ): Promise<Message> {
     const data = await this.client.api.chats.sendPhoto(
       this.id,
       photo,
+      options as any
+    );
+
+    const message = this.messages._add(data, false);
+
+    return message;
+  }
+
+  async sendAudio(
+    audio: BufferResolvable,
+    options: MessageOptions = {}
+  ): Promise<Message> {
+    const data = await this.client.api.chats.sendAudio(
+      this.id,
+      audio,
+      options as any
+    );
+
+    const message = this.messages._add(data, false);
+
+    return message;
+  }
+
+  async sendVideo(
+    video: BufferResolvable,
+    options: MessageOptions = {}
+  ): Promise<Message> {
+    const data = await this.client.api.chats.sendVideo(
+      this.id,
+      video,
+      options as any
+    );
+
+    const message = this.messages._add(data, false);
+
+    return message;
+  }
+
+  async sendDice(
+    emoji?: APIDiceEmoji,
+    options: MessageOptions = {}
+  ): Promise<Message> {
+    const data = await this.client.api.chats.sendDice(
+      this.id,
+      emoji,
       options as any
     );
 

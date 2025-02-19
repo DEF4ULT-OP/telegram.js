@@ -13,10 +13,6 @@ client.on(Events.Ready, () => {
   console.log(`Bot logged in as ${client.user.username}`);
 });
 
-client.on(Events.Update, (update) => {
-  // console.dir(update.rawData, { depth: 10 });
-});
-
 client.on(Events.Message, async (message) => {
   try {
     switch (message.text) {
@@ -52,6 +48,37 @@ client.on(Events.Message, async (message) => {
           { caption: 'This is a test photo' }
         );
         break;
+      case '/sendAudio':
+        await message.chat.sendAudio(
+          'https://file-examples.com/storage/fe020292f667b1bd3a7801e/2017/11/file_example_MP3_1MG.mp3',
+          {
+            caption: 'hii',
+            thumbnail:
+              'https://i.ibb.co/N4Pqpd4/2024-Predator-Default-3840x2400.jpg',
+          }
+        );
+        break;
+      case '/sendVideo':
+        await message.chat.sendVideo(
+          'https://file-examples.com/storage/febb80f7d567b1cb49bdca5/2017/04/file_example_MP4_480_1_5MG.mp4',
+          {
+            caption: 'hii video',
+            thumbnail:
+              'https://i.ibb.co/N4Pqpd4/2024-Predator-Default-3840x2400.jpg',
+            cover:
+              'https://i.ibb.co/N4Pqpd4/2024-Predator-Default-3840x2400.jpg',
+          }
+        );
+        break;
+
+      case '/sendAction':
+        await message.chat.sendAction('typing');
+        break;
+
+      case '/sendDice':
+        await message.chat.sendDice('🎯');
+        break;
+
       default:
       // await message.chat.send('Invalid command');
     }

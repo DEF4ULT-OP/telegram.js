@@ -82,11 +82,12 @@ export const isFileId = (input: string) => {
 };
 
 export const resolveFileIdOrFile = async (
-  resource: BufferResolvable | Stream
+  resource: BufferResolvable | Stream,
+  download = false
 ) => {
   if (
     typeof resource === 'string' &&
-    (isFileId(resource) || isValidUrl(resource))
+    (isFileId(resource) || (isValidUrl(resource) && !download))
   ) {
     return resource;
   }

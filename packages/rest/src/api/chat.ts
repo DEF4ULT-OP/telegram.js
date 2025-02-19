@@ -1,16 +1,31 @@
-import {
-  BufferResolvable,
-  resolveFile,
-  resolveFileIdOrFile,
-} from '@telegramjs/util';
+import { BufferResolvable, resolveFile } from '@telegramjs/util';
 import { REST } from '../REST.js';
 import { APIChat, APIChatMember } from './interfaces/chat.js';
 import {
+  APIAnimationMessageOptions,
+  APIAudioMessageOptions,
+  APIContactMessageOptions,
+  APICopyMessageOptions,
+  APIDiceEmoji,
+  APIDiceMessageOptions,
+  APIDocumentMessageOptions,
+  APIForwardMessageOptions,
+  APILocationMessageOptions,
   APIMediaMessageOptions,
   APIMessage,
   APIMessageOptions,
+  APIPollMessageOptions,
+  APIPollOption,
+  APIReactionTypeCustomEmoji,
+  APIReactionTypeEmoji,
+  APIReactionTypePaid,
+  APIVenueMessage,
+  APIVenueMessageOptions,
+  APIVideoMessageOptions,
+  APIVideoNoteMessageOptions,
+  APIVoiceMessageOptions,
 } from './interfaces/message.js';
-import { RequestData } from '../utils/types.js';
+import { prepareMediaRequest } from '../utils/utils.js';
 
 export class ChatsAPI {
   public constructor(private readonly rest: REST) {}
@@ -108,32 +123,127 @@ export class ChatsAPI {
     photo: BufferResolvable,
     options: APIMediaMessageOptions = {}
   ) {
-    const file = await resolveFileIdOrFile(photo);
-
-    const reqOptions: RequestData = {
+    const reqOptions = await prepareMediaRequest({
       body: {
         chat_id: chatId,
-        caption: options.caption,
         ...options,
       },
-    };
-
-    if (typeof file === 'string') {
-      reqOptions.body!['photo'] = file;
-    } else {
-      reqOptions.files = [
-        {
-          key: 'photo',
-          name: 'photo.jpg',
-          ...file,
-        },
-      ];
-    }
+      files: [{ name: 'photo.jpg', field: 'photo', file: photo }],
+    });
 
     return this.rest.post('/sendPhoto', reqOptions) as Promise<APIMessage>;
   }
 
-  sendAction(
+  async sendAudio(
+    chatId: number,
+    audio: BufferResolvable,
+    options: APIAudioMessageOptions = {}
+  ) {
+    const reqOptions = await prepareMediaRequest({
+      body: {
+        chat_id: chatId,
+        ...options,
+      },
+      files: [
+        { name: 'audio.mp4', field: 'audio', file: audio },
+        { name: 'thumbnail.jpg', field: 'thumbnail', download: true },
+      ],
+    });
+
+    return this.rest.post('/sendAudio', reqOptions) as Promise<APIMessage>;
+  }
+
+  async sendDocument(
+    chatId: number,
+    document: BufferResolvable,
+    options: APIDocumentMessageOptions = {}
+  ) {
+    const reqOptions = await prepareMediaRequest({
+      body: {
+        chat_id: chatId,
+        ...options,
+      },
+      files: [
+        { name: 'document', field: 'document', file: document },
+        { name: 'thumbnail.jpg', field: 'thumbnail', download: true },
+      ],
+    });
+
+    return this.rest.post('/sendDocument', reqOptions) as Promise<APIMessage>;
+  }
+
+  async sendVideo(
+    chatId: number,
+    video: BufferResolvable,
+    options: APIVideoMessageOptions = {}
+  ) {
+    const reqOptions = await prepareMediaRequest({
+      body: {
+        chat_id: chatId,
+        ...options,
+      },
+      files: [
+        { name: 'video.mp4', field: 'video', file: video },
+        { name: 'thumbnail.jpg', field: 'thumbnail', download: true },
+        { name: 'cover.jpg', field: 'cover', download: true },
+      ],
+    });
+
+    return this.rest.post('/sendVideo', reqOptions) as Promise<APIMessage>;
+  }
+
+  async sendAnimation(
+    chatId: number,
+    animation: BufferResolvable,
+    options: APIAnimationMessageOptions = {}
+  ) {
+    const reqOptions = await prepareMediaRequest({
+      body: {
+        chat_id: chatId,
+        ...options,
+      },
+      files: [
+        { name: 'animation', field: 'animation', file: animation },
+        { name: 'thumbnail.jpg', field: 'thumbnail', download: true },
+      ],
+    });
+
+    return this.rest.post('/sendAnimation', reqOptions) as Promise<APIMessage>;
+  }
+
+  async sendVoice(
+    chatId: number,
+    voice: BufferResolvable,
+    options: APIVoiceMessageOptions = {}
+  ) {
+    const reqOptions = await prepareMediaRequest({
+      body: {
+        chat_id: chatId,
+        ...options,
+      },
+      files: [{ name: 'voice', field: 'voice', file: voice }],
+    });
+
+    return this.rest.post('/sendVoice', reqOptions) as Promise<APIMessage>;
+  }
+
+  async sendVideoNote(
+    chatId: number,
+    videoNote: BufferResolvable,
+    options: APIVideoNoteMessageOptions = {}
+  ) {
+    const reqOptions = await prepareMediaRequest({
+      body: {
+        chat_id: chatId,
+        ...options,
+      },
+      files: [{ name: 'video_note', field: 'video_note', file: videoNote }],
+    });
+
+    return this.rest.post('/sendVideoNote', reqOptions) as Promise<APIMessage>;
+  }
+
+  async sendAction(
     chatId: number,
     action: string,
     options: {
@@ -149,5 +259,170 @@ export class ChatsAPI {
         business_connection_id: options.businessId,
       },
     }) as Promise<boolean>;
+  }
+
+  async sendLocation(
+    chatId: number,
+    latitude: number,
+    longitude: number,
+    options: APILocationMessageOptions = {}
+  ) {
+    return this.rest.post('/sendLocation', {
+      body: {
+        chat_id: chatId,
+        latitude,
+        longitude,
+        ...options,
+      },
+    }) as Promise<APIMessage>;
+  }
+
+  async sendVenue(
+    { chatId, latitude, longitude, title, address }: APIVenueMessage,
+    options: APIVenueMessageOptions = {}
+  ) {
+    return this.rest.post('/sendVenue', {
+      body: {
+        chat_id: chatId,
+        latitude,
+        longitude,
+        title,
+        address,
+        ...options,
+      },
+    }) as Promise<APIMessage>;
+  }
+
+  async sendContact(
+    chatId: number,
+    phoneNumber: string,
+    firstName: string,
+    lastName: string,
+    vcard?: string,
+    options: APIContactMessageOptions = {}
+  ) {
+    return this.rest.post('/sendContact', {
+      body: {
+        chat_id: chatId,
+        phone_number: phoneNumber,
+        first_name: firstName,
+        last_name: lastName,
+        vcard,
+        ...options,
+      },
+    }) as Promise<APIMessage>;
+  }
+
+  async sendPoll(
+    chatId: number,
+    question: string,
+    options: APIPollOption[],
+    messageOptions: APIPollMessageOptions = {}
+  ) {
+    return this.rest.post('/sendPoll', {
+      body: {
+        chat_id: chatId,
+        question,
+        options,
+        ...messageOptions,
+      },
+    }) as Promise<APIMessage>;
+  }
+
+  async sendDice(
+    chatId: number,
+    emoji: APIDiceEmoji = '🎲',
+    options: APIDiceMessageOptions = {}
+  ) {
+    return this.rest.post('/sendDice', {
+      body: {
+        chat_id: chatId,
+        emoji,
+        ...options,
+      },
+    }) as Promise<APIMessage>;
+  }
+
+  async setMessageReaction(
+    chatId: number,
+    messageId: number,
+    reactions:
+      | APIReactionTypeEmoji[]
+      | APIReactionTypeCustomEmoji[]
+      | APIReactionTypePaid[],
+    isBig = false
+  ) {
+    return this.rest.post('/sendDice', {
+      body: {
+        chat_id: chatId,
+        message_id: messageId,
+        reaction: reactions,
+        isBig,
+      },
+    }) as Promise<boolean>;
+  }
+
+  async forwardMessage(
+    messageId: number,
+    fromChatId: number,
+    toChatId: number,
+    options: APIForwardMessageOptions
+  ) {
+    return this.rest.post('/forwardMessage', {
+      body: {
+        message_id: messageId,
+        from_chat_id: fromChatId,
+        chat_id: toChatId,
+        ...options,
+      },
+    }) as Promise<APIMessage>;
+  }
+
+  async forwardMessages(
+    messageIds: number[],
+    fromChatId: number,
+    toChatId: number,
+    options: APIForwardMessageOptions
+  ) {
+    return this.rest.post('/forwardMessages', {
+      body: {
+        message_ids: messageIds,
+        from_chat_id: fromChatId,
+        chat_id: toChatId,
+        ...options,
+      },
+    });
+  }
+
+  async copyMessage(
+    messageId: number,
+    fromChatId: number,
+    toChatId: number,
+    options: APICopyMessageOptions
+  ) {
+    return this.rest.post('/copyMessage', {
+      body: {
+        message_id: messageId,
+        from_chat_id: fromChatId,
+        chat_id: toChatId,
+        ...options,
+      },
+    });
+  }
+
+  async copyMessages(
+    messageIds: number[],
+    fromChatId: number,
+    toChatId: number,
+    options: APICopyMessageOptions
+  ) {
+    return this.rest.post('/copyMessage', {
+      body: {
+        message_ids: messageIds,
+        from_chat_id: fromChatId,
+        chat_id: toChatId,
+        ...options,
+      },
+    });
   }
 }
