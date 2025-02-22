@@ -8,11 +8,67 @@ export enum APIChatType {
   Channel = 'channel',
 }
 
+export enum APIChatPermissions {
+  can_send_messages = 'can_send_messages',
+  can_send_audios = 'can_send_audios',
+  can_send_documents = 'can_send_documents',
+  can_send_photos = 'can_send_photos',
+  can_send_videos = 'can_send_videos',
+  can_send_video_notes = 'can_send_video_notes',
+  can_send_voice_notes = 'can_send_voice_notes',
+  can_send_polls = 'can_send_polls',
+  can_send_other_messages = 'can_send_other_messages',
+  can_add_web_page_previews = 'can_add_web_page_previews',
+  can_change_info = 'can_change_info',
+  can_invite_users = 'can_invite_users',
+  can_pin_messages = 'can_pin_messages',
+  can_manage_topics = 'can_manage_topics',
+}
+
+export interface APICreateChatLinkOptions {
+  name?: string;
+  expire_date?: number;
+  member_limit?: number;
+  creates_join_request?: boolean;
+}
+
+export interface APIChatInviteLink {
+  name?: string;
+  invite_link: string;
+  creator: APIUser;
+  creates_join_request: boolean;
+  is_primary: boolean;
+  is_revoked: boolean;
+  expire_date?: number;
+  member_limit?: number;
+  pending_join_request_count?: number;
+  subscription_period?: number;
+  subscription_price?: number;
+}
 export interface APIChatPhoto {
   small_file_id: string;
   small_file_unique_id: string;
   big_file_id: string;
   big_file_unique_id: string;
+}
+
+export type APIChatBoostSource =
+  | {
+      source: 'premium' | 'gift_code';
+      user: APIUser;
+    }
+  | {
+      source: 'giveaway';
+      user: APIUser;
+      giveaway_message_id: number;
+      prize_star_count?: number;
+      is_unclaimed?: number;
+    };
+export interface APIChatBoost {
+  boost_id: string;
+  add_date: number;
+  expiration_date: number;
+  source: APIChatBoostSource;
 }
 export interface APIChat {
   id: number;

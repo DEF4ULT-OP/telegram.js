@@ -1,3 +1,9 @@
+import { APIPhotoSize } from './media.js';
+
+export interface APIUserProfilePhotos {
+  total_count: number;
+  photos: APIPhotoSize[][];
+}
 export interface APIUser {
   id: number;
   is_bot: boolean;

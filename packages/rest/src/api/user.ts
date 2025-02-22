@@ -1,5 +1,5 @@
 import { REST } from '../REST.js';
-import { APIUser } from './interfaces/user.js';
+import { APIUser, APIUserProfilePhotos } from './interfaces/user.js';
 export class UsersAPI {
   public constructor(private readonly rest: REST) {}
 
@@ -7,29 +7,19 @@ export class UsersAPI {
     return this.rest.get('/getMe') as Promise<APIUser>;
   }
 
-  // public async getProfilePhotos(
-  //   userId: number,
-  //   offset?: number,
-  //   limit?: number
-  // ) {
-  //   const response = await this.rest.get('/getUserProfilePhotos', {
-  //     query: {
-  //       user_id: userId,
-  //       offset,
-  //       limit,
-  //     },
-  //   });
-  //   const finalResponse: APIUserProfilePhotos = {
-  //     totalCount: response.total_count,
-  //     photos: [],
-  //   };
-
-  //   for (const photo of response.photos.flat()) {
-  //     finalResponse.photos.push(new APIMediaPhoto(photo));
-  //   }
-
-  //   return finalResponse;
-  // }
+  public async getProfilePhotos(
+    userId: number,
+    offset?: number,
+    limit?: number
+  ) {
+    return this.rest.get('/getUserProfilePhotos', {
+      query: {
+        user_id: userId,
+        offset,
+        limit,
+      },
+    }) as Promise<APIUserProfilePhotos>;
+  }
 
   public async setEmojiStatus(
     userId: number,
